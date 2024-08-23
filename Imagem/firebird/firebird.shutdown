@@ -1,0 +1,68 @@
+#!/bin/bash
+
+fb_install_prefix=/opt/firebird
+FIREBIRD=${fb_install_prefix}
+
+runDir=/var/run/firebird
+pidfile="$runDir/firebird.pid"
+
+GUARDIAN=$FIREBIRD/bin/fbguard
+if [ ! -x $GUARDIAN ]; then
+	GUARDIAN=${fb_install_prefix}/bin/fbguard
+fi
+
+guardian_wait() {
+    if [ "$1" -ne 0 ]; then
+        return 1
+    fi
+
+    RET=1
+    for i in $(seq 1 10); do
+        status=0
+		if ! pidof $GUARDIAN > /dev/null; then
+			printf "%s\n" "Guardian Server Stoped"
+            RET=0
+            break
+        fi
+        sleep 1s
+    done
+    return $RET
+}
+
+firebird_wait() {
+    if [ "$1" -ne 0 ]; then
+        return 1
+    fi
+
+    RET=1
+    for i in $(seq 1 10); do
+        status=0
+		if [ ! -f "$pidfile" ]; then
+			printf "%s\n" "Firebird Server Stoped"
+            RET=0
+            break
+        fi
+        sleep 1s
+    done
+    return $RET
+}
+
+if pidof $GUARDIAN > /dev/null; then
+    printf "%s\n" "Stopping Guardian Server..."
+	kill $(pidof $GUARDIAN) &
+	guardian_wait $?
+fi
+
+if pidof $GUARDIAN > /dev/null; then
+    printf "%s\n" " *** Guardian locked ***"
+fi
+
+if [ -f "$pidfile" ]; then
+	printf "%s\n" "Stopping Firebird Server..."
+    kill $(cat "$pidfile") &
+	firebird_wait $?
+fi
+
+if [ -f "$pidfile" ]; then
+    printf "%s\n" " *** Firebird locked ***"
+fi

@@ -1,0 +1,11 @@
+# aqui podem ser definidas constantes para serem utilizadas nos scripts, ou até posterior
+# como por exemplo donwload de ferramentas próprias de outro repositório
+# pre definição de coisas que serão utilizadas dentro do conteiner
+
+minimal_apt_get_install='apt-get install -y --no-install-recommends'
+
+# Constantes do Firebird
+export FB_URL=https://github.com/FirebirdSQL/firebird/releases/download/v3.0.12/Firebird-3.0.12.33787-0.amd64.tar.gz
+export FB_DIR=Firebird-3.0.12.33787-0.amd64
+export FB_PATH=/opt/firebird
+export ISC_PASSWORD=masterkey

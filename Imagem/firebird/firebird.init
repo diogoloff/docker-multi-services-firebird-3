@@ -1,0 +1,66 @@
+#!/bin/bash
+set -em
+
+fb_install_prefix=/opt/firebird
+
+FIREBIRD=${fb_install_prefix}
+FBRunUser=firebird
+
+# Cria pasta para o arquivo de PID no run
+makeFbDir() {
+	mDir=${1}
+	mode=${2}
+
+	if [ ! -d $mDir ]; then
+		rm -rf $mDir
+		mkdir $mDir
+		if [ "$mode" ]; then
+			chmod $mode $mDir
+		fi
+	fi
+	chown $FBRunUser:$FBRunUser $mDir
+}
+
+runDir=/var/run/firebird
+makeFbDir $runDir
+lockDir=/tmp/firebird
+makeFbDir $lockDir 0770
+
+pidfile="$runDir/firebird.pid"
+FB_OPST="-daemon -forever"
+export FIREBIRD
+
+ISC_USER=
+ISC_PASSWORD=
+export ISC_USER ISC_PASSWORD
+
+GUARDIAN=$FIREBIRD/bin/fbguard
+if [ ! -x $GUARDIAN ]; then
+	GUARDIAN=${fb_install_prefix}/bin/fbguard
+fi
+
+firebird_service_wait() {
+    if [ "$1" -ne 0 ]; then
+        return 1
+    fi
+
+    RET=1
+    for i in $(seq 1 30); do
+		if [ -f "$pidfile" ]; then
+			printf "%s\n" "Firebird Server Started"
+			RET=0
+            break
+		fi
+        sleep 1s
+    done
+    return $RET
+}
+
+printf "%s\n" "Starting Firebird Server..."
+
+# Este seria o metodo para rodar com usuário do firebird que é o padrão em um linux mas assim acaba não rodando o banco quando acesso
+# por programas que não estejam no mesmo usuário
+#/sbin/setuser $FBRunUser $GUARDIAN -pidfile "$pidfile" $FB_OPST
+
+$GUARDIAN -pidfile "$pidfile" $FB_OPST &
+firebird_service_wait $?
