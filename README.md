@@ -1,4 +1,4 @@
-# Uma imagem customizada para rodar multiplos serviços em um único conteiner Docker
+# Uma imagem customizada para rodar multiplos serviços em um único conteiner Docker, com Firebird 3.0 incluido.
 
 Primeiramente esta idéia surgiu da necessidade de hospedar mais de um cliente no mesmo servidor na nuvem, a fim de reduzir custos e aproveitar melhor os recursos. Ocorre que até então este processo era realizado diretamente no linux, criando várias pastas uma para cada cliente, e os serviços eram duplicados em várias instancias uma para cada cliente com uma porta de acesso diferente, o que tornava complexo o gerênciamento, além de problemas que as vezes necessitava reiniciar o servidor, o que obrigava derrubar a todos os clientes.
 
