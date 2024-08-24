@@ -504,7 +504,7 @@ setDBAPassword() {
 	# Adicionado esta condição antes das demais
 	# se não estiver setado irá seguir o procedimento normal do instalador
 	# se indicado a senha padrão do SYSDBA será a do parâmetro
-	if [ -z "${ISC_PASSWORD}"]
+	if [ -z "${ISC_PASSWORD}" ]
 	then
 		if [ -z "$InteractiveInstall" ]
 		then
